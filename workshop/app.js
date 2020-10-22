@@ -19,6 +19,12 @@ function LoginForm() {
       id: "loginForm",
       onsubmit: (event) => {
         event.preventDefault();
+        //console.log(event);
+        const email = event.target.elements.email.value;
+        const password = event.target.elements.password.value;
+        login(email, password).then((user) => {
+          console.log(user);
+        });
       },
     },
     h("label", { for: "email" }, "Email"),
