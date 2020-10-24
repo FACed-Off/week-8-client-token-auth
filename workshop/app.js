@@ -23,7 +23,10 @@ function LoginForm() {
         const email = event.target.elements.email.value;
         const password = event.target.elements.password.value;
         login(email, password).then((user) => {
-          console.log(user);
+          window.localStorage.setItem("dogs-token", user.access_token);
+          const messageEl = h("span", {}, `Hello ${user.name}`);
+          welcomeEl.append(messageEl);
+          loginFormEl.replaceWith(welcomeEl);
         });
       },
     },
