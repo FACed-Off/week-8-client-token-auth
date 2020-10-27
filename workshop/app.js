@@ -10,14 +10,18 @@ const logoutEl = LogoutButton();
 const app = document.querySelector("#app");
 app.append(loginFormEl);
 
+// if we have a stored token that means the user is logged in
+// fetch that user from the server and show a welcome message
 const token = window.localStorage.getItem("dogs-token");
-if(token){
+if (token) {
   getUser(token).then((user) => {
     const messageEl = h("span", {}, `Hello ${user.name}`);
-    welcomeEl.append(messageEl);
+    welcomeEl.innerHTML = "";
+    welcomeEl.append(messageEl, logoutEl);
     loginFormEl.replaceWith(welcomeEl);
-  })
+  });
 }
+
 // creates the form to log in:
 // <form><input type="email"><input type="password"><button>Log in</button>
 function LoginForm() {
@@ -27,13 +31,16 @@ function LoginForm() {
       id: "loginForm",
       onsubmit: (event) => {
         event.preventDefault();
-        //console.log(event);
         const email = event.target.elements.email.value;
         const password = event.target.elements.password.value;
         login(email, password).then((user) => {
+          // save the access token in localStorage so the user stays logged in
           window.localStorage.setItem("dogs-token", user.access_token);
+
+          // show the welcome message instead of the form
           const messageEl = h("span", {}, `Hello ${user.name}`);
-          welcomeEl.append(messageEl);
+          welcomeEl.innerHTML = "";
+          welcomeEl.append(messageEl, logoutEl);
           loginFormEl.replaceWith(welcomeEl);
         });
       },
@@ -57,8 +64,15 @@ function LoginForm() {
   );
 }
 
-// Creates the logout button
-// <button>Log out</button>
 function LogoutButton() {
-  return h("button", {}, "Log out");
+  return h(
+    "button",
+    {
+      onclick: () => {
+        window.localStorage.removeItem("dogs-token");
+        welcomeEl.replaceWith(loginFormEl);
+      },
+    },
+    "Log out"
+  );
 }
