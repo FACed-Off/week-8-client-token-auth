@@ -10,6 +10,14 @@ const logoutEl = LogoutButton();
 const app = document.querySelector("#app");
 app.append(loginFormEl);
 
+const token = window.localStorage.getItem("dogs-token");
+if(token){
+  getUser(token).then((user) => {
+    const messageEl = h("span", {}, `Hello ${user.name}`);
+    welcomeEl.append(messageEl);
+    loginFormEl.replaceWith(welcomeEl);
+  })
+}
 // creates the form to log in:
 // <form><input type="email"><input type="password"><button>Log in</button>
 function LoginForm() {
